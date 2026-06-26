@@ -1,0 +1,1 @@
+Consiste en una página web oficial de la UCSUR que ofrece un videojuego diseñado para fortalecer el aprendizaje en estudiantes de baja retención, este videojuego trata de una isla la cual somos náufragos y debemos intentar escapar a través de objetivos y misiones que se completan con preguntas relacionadasa un tema especifico.
