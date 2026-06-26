@@ -1,2 +1,2 @@
 Consiste en una página web oficial de la UCSUR que ofrece un videojuego diseñado para fortalecer el aprendizaje en estudiantes de baja retención, este videojuego trata de una isla la cual somos náufragos y debemos intentar escapar a través de objetivos y misiones que se completan con preguntas relacionadasa un tema especifico.
-![Uploading pantalla_carga.png…]()
+https://cdn.discordapp.com/attachments/1316572456932212736/1520192285109653545/pantalla_carga.png?ex=6a404ce4&is=6a3efb64&hm=43afefe1c7985f01752c37ff5c8de4ad186716920b0f4c86193e62d6718e7251&
