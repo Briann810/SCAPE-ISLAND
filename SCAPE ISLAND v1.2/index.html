@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funciones Matemáticas — Aventura Isla</title>
+
+  <!-- ── Google Fonts (cargadas también en CSS, aquí para pre-conectar) ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- ── Hoja de estilos principal ── -->
+  <link rel="stylesheet" href="src/css/styles.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       PANTALLA DE CARGA
+       Muestra la imagen de playa + texto "CARGANDO..." animado.
+       La duración se controla en CONFIG.duracionCarga (data.js).
+  ============================================================ -->
+  <div id="pantalla-carga">
+    <img class="fondo-carga" src="assets/imagenes/backgrounds/pantalla_carga.png" alt="Cargando" />
+    <span class="texto-cargando">
+      <span>C</span><span>A</span><span>R</span><span>G</span><span>A</span><span>N</span><span>D</span><span>O</span><span>.</span><span>.</span><span>.</span>
+    </span>
+  </div>
+
+
+  <!-- ============================================================
+       PANTALLA DE BIENVENIDA
+       Frase inicial antes de comenzar el juego.
+  ============================================================ -->
+  <div id="pantalla-bienvenida">
+    <div class="bienvenida-caja">
+      <p class="bienvenida-frase">
+        Cada respuesta decide tu destino. Consigue recursos, cuida tu energía
+        y construye el barco para sobrevivir.
+      </p>
+      <button class="btn-confirmar" id="btn-empezar">⚓ Empezar aventura</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       PANTALLA DEL JUEGO (MAPA)
+       Se muestra luego de la carga. Contiene:
+         • Fondo: imagen del mapa (object-fit: cover)
+         • Cronómetro superior
+         • Botones de instrucciones / sonido (arriba izquierda)
+         • Panel vida/energía (inferior izquierdo, horizontal)
+         • Panel recursos (inferior derecho, horizontal)
+         • Capa de nodos (círculos interactivos sobre el mapa)
+  ============================================================ -->
+  <div id="pantalla-juego">
+
+    <!-- Fondo = imagen del mapa (llena la pantalla completa) -->
+    <img id="fondo-mapa" src="assets/imagenes/backgrounds/mapa.png" alt="Mapa de la isla" />
+
+    <!-- ── BOTONES SUPERIOR IZQUIERDA: INSTRUCCIONES Y SONIDO ── -->
+    <div id="barra-acciones">
+      <button id="btn-instrucciones" class="btn-icono" title="Instrucciones del juego" aria-label="Instrucciones">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="7.6" r="1.15" fill="currentColor"/>
+          <rect x="10.85" y="10.6" width="2.3" height="6.6" rx="1.05" fill="currentColor"/>
+        </svg>
+      </button>
+      <button id="btn-sonido" class="btn-icono" title="Silenciar / activar sonido" aria-label="Sonido">
+        <svg id="icono-nota" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <!-- Nota musical (corchea doble): icono para mutear/activar sonido -->
+          <path d="M9.5 4.2v10.1a3.05 3.05 0 1 0 1.6 2.7V9.1l6-1.55V13a3.05 3.05 0 1 0 1.6 2.7V3.4l-9.2 2.3v-1.5z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ── CRONÓMETRO ── -->
+    <div id="cronometro">00:00</div>
+
+    <!-- ── PANEL VIDA Y ENERGÍA (horizontal, inferior izquierdo) ── -->
+    <div id="panel-vida">
+      <div class="barra-fila">
+        <span class="barra-icono">❤️</span>
+        <div class="barra-textos">
+          <span class="barra-label">VIDA</span>
+          <div class="barra-pista">
+            <div class="barra-fill vida" id="vida-fill" style="width:80%"></div>
+          </div>
+        </div>
+        <span class="barra-val" id="vida-val">80/100</span>
+      </div>
+      <div class="barra-fila">
+        <span class="barra-icono">⚡</span>
+        <div class="barra-textos">
+          <span class="barra-label">ENERGÍA</span>
+          <div class="barra-pista">
+            <div class="barra-fill energia" id="energia-fill" style="width:60%"></div>
+          </div>
+        </div>
+        <span class="barra-val" id="energia-val">60/100</span>
+      </div>
+    </div>
+
+    <!-- ── PANEL RECURSOS (horizontal) ── -->
+    <div id="panel-recursos">
+      <!-- Los ítems de recursos se generan dinámicamente en game.js -->
+      <div id="capa-recursos"></div>
+    </div>
+
+    <!-- ── CAPA DE NODOS ── -->
+    <!-- Los botones de cada estación se insertan dinámicamente en game.js -->
+    <div id="capa-nodos"></div>
+
+    <!-- ── CAPA DE DECORACIÓN ANIMADA (brillo) ── -->
+    <div id="capa-decoracion">
+      <span class="brillo-agua"></span>
+    </div>
+
+  </div><!-- fin #pantalla-juego -->
+
+
+  <!-- ============================================================
+       OVERLAY + MODAL DE PREGUNTA
+       Aparece al hacer clic en un nodo desbloqueado.
+       El contenido interior (#contenido-modal) se inyecta
+       dinámicamente en game.js con la pregunta o el estado
+       "ya respondido".
+  ============================================================ -->
+  <div id="overlay-modal">
+    <div class="modal-caja">
+      <div id="contenido-modal"></div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL DE INSTRUCCIONES
+  ============================================================ -->
+  <div id="overlay-instrucciones">
+    <div class="modal-caja instrucciones-caja">
+      <button class="modal-cerrar" id="btn-cerrar-instrucciones">✕</button>
+      <h2 class="instrucciones-titulo">📜 INSTRUCCIONES</h2>
+      <p class="instrucciones-intro">
+        Tu misión es mantenerte con vida, administrar tus recursos y construir
+        el barco antes de quedarte sin nada.
+      </p>
+
+      <div class="instruccion-bloque">
+        <h3>❤️ VIDA</h3>
+        <p>Empiezas con vida. Cada error te quita <strong>−20 de vida</strong>.</p>
+        <p>Si llega a 0 → ❌ "Perdiste. Vuelve a intentar."</p>
+      </div>
+
+      <div class="instruccion-bloque">
+        <h3>⚡ ENERGÍA</h3>
+        <p>La energía baja 1 cada 10 segundos.</p>
+        <p>💧 El agua es la única forma de recuperarla.</p>
+      </div>
+
+      <div class="instruccion-bloque">
+        <h3>🍖 COMIDA</h3>
+        <p>Recupera vida según la dificultad:</p>
+        <p>Fácil: <strong>+20 ❤️</strong> &nbsp;|&nbsp; Difícil: <strong>+5 ❤️</strong></p>
+      </div>
+
+      <div class="instruccion-bloque">
+        <h3>🌲🛠️ RECURSOS (madera y herramientas)</h3>
+        <p>Sirven para construir el barco. Puntos según intentos:</p>
+        <ul class="lista-intentos">
+          <li>1 intento → <strong>100 puntos</strong></li>
+          <li>2 intentos → <strong>50 puntos</strong></li>
+          <li>3 intentos → <strong>25 puntos</strong></li>
+          <li>4 intentos → <strong>5 puntos</strong></li>
+          <li>5+ intentos → <strong>0 puntos</strong></li>
+        </ul>
+      </div>
+
+      <div class="instruccion-bloque destacado">
+        <h3>🎯 OBJETIVO FINAL</h3>
+        <p>Sobrevive, responde con precisión y construye el barco antes de que tus recursos se agoten.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL DE DERROTA (vida en 0)
+  ============================================================ -->
+  <div id="overlay-derrota">
+    <div class="modal-caja derrota-caja">
+      <div class="derrota-icono">❌</div>
+      <h2 class="derrota-titulo">Perdiste</h2>
+      <p class="derrota-texto">Vuelve a intentar.</p>
+      <button class="btn-confirmar" id="btn-reintentar-derrota">🔄 Reintentar</button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL FINAL (RESULTADOS)
+       Se muestra cuando el jugador completa todas las preguntas.
+       Incluye puntaje, tiempo y lista de partidas guardadas.
+  ============================================================ -->
+  <div id="modal-final">
+    <div class="final-caja">
+      <div class="final-trofeo">🏆</div>
+      <h2 class="final-titulo">¡Isla Conquistada!</h2>
+      <p class="final-subtitulo">Completaste todas las estaciones</p>
+
+      <div class="final-stats">
+        <div class="stat-item">
+          <div class="stat-val" id="final-tiempo">—</div>
+          <div class="stat-lbl">Tiempo</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val" id="final-puntaje">—</div>
+          <div class="stat-lbl">Puntaje Total</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val" id="final-preguntas">—</div>
+          <div class="stat-lbl">Completadas</div>
+        </div>
+      </div>
+
+      <!-- Recursos para el bote -->
+      <div class="final-recursos-bote">
+        <div class="recursos-bote-titulo">⛵ Recursos para el bote</div>
+        <div class="recursos-bote-detalle">
+          <div class="recurso-bote-fila">
+            <span style="font-size:1.3rem">🌲</span>
+            <span class="recurso-bote-label">Madera</span>
+            <span class="recurso-bote-pts" id="final-madera-pts">0</span>
+          </div>
+          <div class="recurso-bote-fila">
+            <span style="font-size:1.3rem">🛠️</span>
+            <span class="recurso-bote-label">Herramientas</span>
+            <span class="recurso-bote-pts" id="final-herramientas-pts">0</span>
+          </div>
+        </div>
+        <hr class="recursos-bote-divider">
+        <div class="recursos-bote-total-label">Total recursos</div>
+        <div class="recursos-bote-total" id="final-recursos-total">0</div>
+      </div>
+
+      <!-- Historial de partidas anteriores (en sesión) -->
+      <div class="final-historial">
+        <div class="historial-titulo">📋 Historial de partidas</div>
+        <div id="lista-historial"></div>
+      </div>
+
+      <button class="btn-reiniciar" onclick="reiniciarJuego()">
+        JUGAR DE NUEVO
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       TOAST — Mensaje de notificación breve
+  ============================================================ -->
+  <div id="toast"></div>
+
+
+  <!-- ============================================================
+       AUDIO
+       sonido-ui   → clic al abrir/cerrar cualquier ventana/modal
+       musica-fondo → música ambiental en loop durante el juego
+  ============================================================ -->
+  <audio id="sonido-ui" src="assets/audios/sfx/sonido_ventana.mp3" preload="auto"></audio>
+  <audio id="musica-fondo" src="assets/audios/music/musica_juego.mp3" preload="auto" loop></audio>
+  <audio id="sonido-correcta" src="assets/audios/sfx/respuesta_correcta.mp3" preload="auto"></audio>
+  <audio id="sonido-incorrecta" src="assets/audios/sfx/respuesta_incorrecta.mp3" preload="auto"></audio>
+  <audio id="sonido-victoria" src="assets/audios/sfx/victoria_sonido.mp3" preload="auto"></audio>
+  <audio id="sonido-gameover" src="assets/audios/sfx/game_over.mp3" preload="auto"></audio>
+
+
+  <!-- ============================================================
+       SCRIPTS
+       Orden de carga:
+         1. data.js   → preguntas, recompensas, posiciones, config
+         2. game.js   → lógica del juego (depende de data.js)
+  ============================================================ -->
+  <script src="src/js/data.js"></script>
+  <script src="src/js/game.js"></script>
+
+</body>
+</html>
