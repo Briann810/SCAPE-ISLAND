@@ -180,7 +180,7 @@ button { font-family: inherit; }
   height: 44px;
   border-radius: 50%;
   border: none;
-  background: var(--turquesa-main);
+  background: var(--azul-petroleo);
   color: var(--crema-main);
   display: flex;
   align-items: center;

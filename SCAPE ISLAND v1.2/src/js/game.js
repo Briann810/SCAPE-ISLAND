@@ -700,8 +700,8 @@ btnSonido.addEventListener('click', () => {
     audioMusica.muted = false;
     intentarReproducirMusica();
   } else {
-    btnSonido.style.background = '#08707d';
-    btnSonido.style.color = '#fff';
+    btnSonido.style.background = '#e05c5c';
+    btnSonido.style.color = '#1a1a1a';
     iconoNota.style.opacity = '1';
     audioMusica.muted = true;
   }
